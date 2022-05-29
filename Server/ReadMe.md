@@ -1,3 +1,13 @@
+# Backend for Whatsapp CLone Project
+
+## Libraries used:
+- express server- to create an configurable server
+- mongoose - To handle operations with database. I have used Mongodb database for the same
+- CORS - to interact with different Web API
+- Yup - for parsing and validating Javascript object that comes from the user
+- body-parser - to parse the get/post requests
+- babel - For using features of ES6 
+
 # Database Schema
 
 ## Collections:
