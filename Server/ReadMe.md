@@ -23,3 +23,25 @@
     text
     addedOn
     
+## API Documentation
+
+- API needed:  create-user, login ,channel, searchuser,channel list API,send-messages
+
+### `users`
+1. `POST /user`
+Creates a new user
+2. `POST /login`
+login endpoint
+3. `POST /channel`
+creating a channel
+4. `GET /search-user`
+
+5. `GET /channel-list`
+
+6. `POST /message`
+sending a message
+
+## To DO:
+-  seen messages,blue tick feature
+-  audio recording 
+-  call feature 
