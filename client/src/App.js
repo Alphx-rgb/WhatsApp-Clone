@@ -32,11 +32,11 @@ const ChatPlaceholder=styled.img`
   border-radius:50%;
   object-fit:contain;
 `;
-function App() {
+function App(props) {
   const [selectedChat,setChat] = useState(false)
   return (
     <Container> 
-      <ContactListComponent setChat ={setChat} />
+      <ContactListComponent setChat ={setChat} imageUrl={props.userinfo.imageUrl}   />
       {selectedChat?<ConversationComponent selectedChat = {selectedChat}/>:
       <Placeholder>
         <ChatPlaceholder src="/welcome-placeholder.jpeg" />

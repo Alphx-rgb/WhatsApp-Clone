@@ -12,6 +12,7 @@ export const ProfileInfoDiv = styled.div`
     flex-direction:row;
     background-color:#ededed;
     padding:10px;
+    justify-content:space-between;
 `
 export const ProfileImage = styled.img`
     border-radius:50%;
