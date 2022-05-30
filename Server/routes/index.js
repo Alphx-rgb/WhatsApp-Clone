@@ -6,15 +6,11 @@ const applyRoutes = (app)=>{
     })
 // create-user, login ,channel, searchuser,channel list API,send-messages
     app.post('/user',Validation.ValidateCreateUser ,Controller.createUser);
-    app.post('/login',Validation.ValidateLogin,Controller.loginUser(req,res));
-    app.post('/channel',Validation.ValidateChannel,Controller.createChannel(req,res));
-    app.post('/search-user',Validation.ValidateSearchUser, Controller.searchUser);
-    app.post('/channel-list',Validation.ValidateGetChannelList,Controller.getChannelList(req,res));
-    app.post('/message',Validation.ValidateAddMessage,Controller.sendMessage(req,res));
-    
-
-
-
+    app.post('/login',Validation.ValidateLogin,Controller.loginUser);
+    app.post('/channel',Validation.ValidateCreateChannel,Controller.createChannel);
+    app.get('/search-user',Validation.ValidateSearchUser, Controller.searchUser);
+    app.get('/channel-list',Validation.ValidateGetChannelList,Controller.getChannelList);
+    app.post('/message',Validation.ValidateAddMessage,Controller.sendMessage);
 };
 
 export default applyRoutes;

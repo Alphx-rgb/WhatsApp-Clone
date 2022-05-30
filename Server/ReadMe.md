@@ -8,6 +8,9 @@
 - body-parser - to parse the get/post requests
 - babel - For using features of ES6 
 
+## Project Structure
+
+
 # Database Schema
 
 ## Collections:
@@ -39,19 +42,44 @@
 
 ### `users`
 1. `POST /user`
-Creates a new user
+    ```
+    req.body.name
+    req.body.phone
+    req.body.password
+    req.body.profilePic
+    req.body.addedOn
+    ```
+Creates a new user 
 2. `POST /login`
+    
+    ```
+    req.body.phoneNumber
+    req.body.password
+    ```
 login endpoint
+    
 3. `POST /channel`
-creating a channel
+    ```
+    channelUsers ={ name,_id,profilePic}
+    ```
+creating a new channel if doesnt't exist
+
 4. `GET /search-user`
+    ```
+    req.query.phone
+    ```
+
 
 5. `GET /channel-list`
+    ```
+    req.query.userId
+    ```
 
 6. `POST /message`
 sending a message
 
 ## To DO:
+-  channel - to fetch if already exits
 -  seen messages,blue tick feature
 -  audio recording 
 -  call feature 

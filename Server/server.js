@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 import connectDB from './dbConnection/index'
-import configureExpressApp from './routes/config';
+import configureExpressApp from './config';
 import applyRoutes from './routes/index'
 // configuring our App 
 configureExpressApp(app);

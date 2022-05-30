@@ -1,31 +1,35 @@
 import mongoose, { mongo } from 'mongoose';
 const UserSchema = new mongoose.Schema({
     name:{type:String,default:""},
-    phone:{type:String,default:""},
+    phoneNumber:{type:String,default:""},
     password:{type:String,default:""},
     profilePic:{type:String,default:""},
     addedOn:{type:Number,default:Date.now()}
 });
 
 UserSchema.method({
-    saveData:async ()=>{
-        return(this.save())
+    saveData: async function () {
+        return this.save()
     }
 });
 UserSchema.static({
-    findData: (findObj)=>{
-        return(this.find(findObj));
+    // NOte: here 'this' will not work
+    // findData: (findObj)=>{
+    //     return(this.find(findObj));
+    // }
+    findData: function (findObj) {
+        return this.find(findObj)
     },
-    findOneData:(findObj)=>{
-        return( this.find(findObj))
+    findOneData: function (findObj) {
+        return this.findOne(findObj)
     },
-    findOneAndUpdateData:(findObj,updateObj)=>{
-        return( this.findOneAndUpdate(findObj,updateObj),{
-            upsert:true,
-            new:true,
-            setDefaultOnInsert:true
+    findOneAndUpdateData: function (findObj, updateObj) {
+        return this.findOneAndUpdate(findObj, updateObj, {
+            upsert: true,
+            new: true,
+            setDefaultsOnInsert: true
         })
-    }
+    },
 });
 
 
