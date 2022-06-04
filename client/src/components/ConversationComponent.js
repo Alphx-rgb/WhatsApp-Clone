@@ -1,80 +1,146 @@
-import {SearchContainer,SearchInput,ChatBox, Container, ProfileHeader, ProfileImage, Emoji, MessageContainer, MessageDiv, Message, MessageTime, SendButton, SendButtonSign} from './../styles/ConversationComponent'
-import {messagesList} from './../mockData';
+import {SearchContainer,SearchInput,ChatBox, Container, ProfileHeader, ProfileImage, Emoji, MessageContainer, MessageDiv, Message, MessageTime, SendButton, SendButtonSign,ContactName,ProfileInfo} from './../styles/ConversationComponent'
 import EmojiPicker from 'emoji-picker-react';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import {httpManager} from './../managers/httpManager';
+import {io} from 'socket.io-client';
+import gettime from '../managers/time';
+let socket;
+const CONNECTION_PORT = "localhost:3001/"
+socket = io(CONNECTION_PORT);
 
+export const  ConversationComponent = (props) => {
+    const { selectedChat, userinfo, refreshContactList } = props;
+    const [text, setText] = useState("");
+    const [pickerVisible, togglePicker] = useState(false);
+    const [messageList, setMessageList] = useState([]);
+    const [room,setRoom] = useState(userinfo.name);
+    const [OtheruserName,setOtherUserName] = useState();
 
+    useEffect(()=>{
+      console.log("room",room);
+      socket.emit('join_room',room);
+    },[]);
+    useEffect(()=>{
+      socket.on("msg_rcv",(data)=>{
+        let msgReqData = {
+          "senderEmail": selectedChat.otherUser.email,
+          "message":data,
+          "addedOn":gettime()
+      };
+      console.log(messageList);
+      let messages = (messageList?.length>0)?[...messageList]:[];
+      messages.push(msgReqData);
+        {setMessageList(messages);}
+      })
+    },[socket]);
+    useEffect(()=>{
+        socket = io(CONNECTION_PORT)
+    },[CONNECTION_PORT]);
+    useEffect(() => {
+      setMessageList(selectedChat.channelData.messages);
+      setOtherUserName(selectedChat.otherUser.name);
+    }, [selectedChat]);
+    const SendMessagetoRoom =(msg)=>{
+      socket.emit("message",{"room":OtheruserName,"msg":msg});
+    }
+    const onEnterPress = async (event) => {
 
-export const ConversationComponent = (props)=>{
-    const [text,setText]  = useState()
-    const onEmojiclick= (event,emoji)=>{
-        if(text)
-        {setText(text+String(emoji.emoji))}
-        else{
-            setText(String(emoji.emoji))
+      let channelId = selectedChat.channelData._id;
+      if (event.key === "Enter") {
+        if (!messageList || !messageList.length) {
+          const obj={ 
+          "channelUsers" : [
+            {
+              email: userinfo.email,
+              name: userinfo.name,
+              profilePic: userinfo.imageUrl,
+            },
+            {
+              email: selectedChat.otherUser.email,
+              name: selectedChat.otherUser.name,
+              profilePic: selectedChat.otherUser.profilePic,
+            },
+          ],
+          "messages":[
+            {
+            "senderEmail": userinfo.email,
+            "message":text,
+            "addedOn":gettime()
+          }
+          ]
+        };
+          const channelResponse = await httpManager.createChannel(obj);
+          channelId = channelResponse.data.responseData._id;
         }
-    }
-    const onInput= (event,text_inp)=>{
-        setText(text+text_inp)
-    }
-    const [pickerVisible,togglePicker] = useState()
-    const [messageList,setMessageList] = useState(messagesList)
-    const onEnterPress = (e)=>{
-        if(e.key =="Enter"){
-            const message = [...messageList];
-            message.push({
-                id:messageList.length +1,
-                messageType:"TEXT",
-                text,
-                senderID: 0,
-                addedOn: "12:02 PM"
-            })
-            setMessageList(message)
-            setText("") 
-        }
-    }
-    const SendMessge  = (e)=>{
-        messageList.push({
-            id:messageList.length +1,
-            messageType:"TEXT",
-            text,
-            senderID: 0,
-            addedOn: "12:02 PM"
-        })
-        setText("") 
-    }
-    return(
-    <Container>
+        refreshContactList();
+
+        const messages = (messageList?.length>0)?[...messageList]:[];
+     
+        const msgReqData = {
+            "senderEmail": userinfo.email,
+            "message":text,
+            "addedOn":gettime()
+        };
+        if(messageList?.length)
+       { const messageResponse = await httpManager.SendMessage({
+          channelId,
+          messages: msgReqData,
+        });}
+        // connectToRoom();
+        SendMessagetoRoom(text);
+        messages.push(msgReqData);
+        setMessageList(messages);
+        setText("");
+      }
+    };
+    return (
+      <Container>
         <ProfileHeader>
-            <ProfileImage src={props.selectedChat.profilePic}/>
-            {props.selectedChat.name}
+          <ProfileInfo>
+            <ProfileImage src={selectedChat.otherUser.profilePic} />
+            <ContactName>{selectedChat.otherUser.name}</ContactName>
+          </ProfileInfo>
         </ProfileHeader>
         <MessageContainer>
-            {messageList.map((messageData,index)=>
-            
-                <MessageDiv key={index} isYours={(messageData.senderID)===0?true:false}>
-                    <Message key={index} isYours={(messageData.senderID)===0?true:false}>
-                        <span>{messageData.text}</span>
-                        <MessageTime key={index}>
+          {messageList?.map((messageData,index) => (
+            <MessageDiv key={index} isYours={messageData.senderEmail === userinfo.email}>
+              <Message isYours={messageData.senderEmail === userinfo.email}>
+                <span>{[messageData.message]}</span>
+                <MessageTime key={index}>
                             <span>
                                 {messageData.addedOn}
                             </span>
-                        </MessageTime>
-                    </Message>
-                </MessageDiv>
-            )}
-           
+                </MessageTime>
+              </Message>
+            </MessageDiv>
+          ))}
         </MessageContainer>
+  
         <ChatBox>
-            <SearchContainer>
-                {pickerVisible && <EmojiPicker pickerStyle={{position:"absolute",left:"15px",bottom:"50px"}}
-                    onEmojiClick={onEmojiclick}/>}
-                <Emoji src="data.svg" onClick={()=>{
-                    togglePicker(!pickerVisible)
-                }}/>
-                <SearchInput onKeyDown={onEnterPress} type="text" placeholder="Type a message" value={text} onChange={(e)=>{setText(e.target.value)}}/>
-                </SearchContainer>
-                <SendButton><SendButtonSign src="/send-sign.png" onClick={SendMessge} /></SendButton>
+          <SearchContainer>
+            {pickerVisible && (
+              <EmojiPicker
+                pickerStyle={{ position: "absolute", bottom: "60px" }}
+                onEmojiClick={(e, emoji) => {
+                  setText(text + emoji.emoji);
+                  togglePicker(false);
+                }}
+              />
+            )}
+            <Emoji
+              src={"/data.svg"}
+              onClick={() => togglePicker((pickerVisible) => !pickerVisible)}
+            />
+            <SearchInput
+              placeholder="Type a message"
+              value={text}
+              onKeyDown={onEnterPress}
+              onChange={(e) => setText(e.target.value)}
+            />
+          </SearchContainer>
         </ChatBox>
-    </Container>)
-}
+      </Container>
+    );
+  }
+  
+  

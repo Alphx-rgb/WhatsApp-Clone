@@ -4,7 +4,6 @@ const connectDB = ()=>{
     console.log("DB trying to connect on "+ new Date());
     const options={
         keepAlive:1,
-        // autoReconnect:true,
         maxpoolSize:10,
         useNewUrlParser:true,
         useUnifiedTopology:true, 

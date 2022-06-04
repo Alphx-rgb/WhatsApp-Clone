@@ -48,3 +48,8 @@ export const QRCode = styled.img        `
     height:264px;
     background-color:white;
 `;
+
+export const SearchResults= styled.div`
+    width:100%;]
+    height:200px;
+`;

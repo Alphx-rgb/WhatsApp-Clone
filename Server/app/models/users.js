@@ -1,10 +1,15 @@
 import mongoose, { mongo } from 'mongoose';
+// For the time now
+Date.prototype.timeNow = function () {
+    return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+}
+
 const UserSchema = new mongoose.Schema({
     name:{type:String,default:""},
+    email:{type:String,default:""}, //google authentication
     phoneNumber:{type:String,default:""},
-    password:{type:String,default:""},
     profilePic:{type:String,default:""},
-    addedOn:{type:Number,default:Date.now()}
+    addedOn:{type:String,default:String(new Date().timeNow())}
 });
 
 UserSchema.method({

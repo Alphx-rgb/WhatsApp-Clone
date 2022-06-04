@@ -1,21 +1,24 @@
 import mongoose, { mongo } from 'mongoose';
-
+// For the time now
+Date.prototype.timeNow = function () {
+    return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+}
 const channelSchema = new mongoose.Schema({
     channelUsers : [
         {
-        _id:{type:String,default:""},
+        email:{type:String,default:""},
         name:{type:String,default:""},
         profilePic:{type:String,default:""},
         },
     ],
     messages:[
         {
-        senderId:{type:String,default:""},
+        senderEmail:{type:String,default:""},
         message:{type:String,default:""},
-        addedOn:{type:Number,default:Date.now()}
+        addedOn:{type:String,default:String(((new Date()).timeNow()))}
         },
     ],
-    addedOn:{type:Number,default:Date.now()}
+    addedOn:{type:String,default:(new Date()).timeNow()}
 });
 
 channelSchema.method({

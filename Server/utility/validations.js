@@ -2,22 +2,13 @@ import * as yup from 'yup';
 import {sendResponse, sendError} from './index';
 export const ValidateCreateUser = async (req,res,next)=>{
     let schema = yup.object().shape({
-        phoneNumber:yup.number().required(),
+        phoneNumber:yup.number(),
         name:yup.string().required(),
-        password:yup.string().required(),
+        email:yup.string().required(),
         profilePic:yup.string()
     })
     await validate(schema, req.body,res,next);
-    // schema.validate(req.body,{abortEarly:false}).then((valid)=>{
-    //     if(valid){
-    //         next();
-    //     }
-    //     else{
-    //         res.status(400).send("Invalid Request");
-    //     }
-    // }).catch((e)=>{
-    //     res.status(400).send("Invalid Request");
-    // })
+
 };
 
 export const ValidateLogin = async (req,res,next)=>{
@@ -29,22 +20,27 @@ export const ValidateLogin = async (req,res,next)=>{
 };
 export const ValidateGetChannelList= async (req,res,next)=>{
     const schema= yup.object().shape({
-        userId:yup.string().required(),
+        // users:yup.array().of(yup.object().shape({
+        //     email:yup.string().required(),
+        //     name:yup.string().required(),
+        //     profilePic:yup.string(),
+        // })).required(),
+        "email":yup.string().required()
     })
-    await validate(schema,req.query,res,next);
+    await validate(schema,req.body,res,next);
 };
 
 export const ValidateSearchUser = async (req,res,next) =>{
     const schema = yup.object().shape({
-        phone:yup.number().required()
+        email:yup.string().required()
     });
     await validate(schema, req.query,res,next);
 };
 export const ValidateCreateChannel = async (req,res,next)=>{
     const schema = yup.object().shape({
         channelUsers:yup.array().of(yup.object().shape({
+            email:yup.string().required(),
             name:yup.string().required(),
-            _id:yup.string().required(),
             profilePic:yup.string(),
         })).length(2).required(),
     });
@@ -54,7 +50,7 @@ export const ValidateAddMessage = async (req,res,next)=>{
     const schema=yup.object().shape({
         channelId:yup.string().required(),
         messages:yup.object().shape({
-            senderId:yup.string().required(),
+            senderEmail:yup.string().required(),
             message:yup.string().required()
         }),
     });

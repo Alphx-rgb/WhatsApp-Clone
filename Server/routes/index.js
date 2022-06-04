@@ -9,7 +9,7 @@ const applyRoutes = (app)=>{
     app.post('/login',Validation.ValidateLogin,Controller.loginUser);
     app.post('/channel',Validation.ValidateCreateChannel,Controller.createChannel);
     app.get('/search-user',Validation.ValidateSearchUser, Controller.searchUser);
-    app.get('/channel-list',Validation.ValidateGetChannelList,Controller.getChannelList);
+    app.post('/channel-list',Validation.ValidateGetChannelList,Controller.getChannelList);
     app.post('/message',Validation.ValidateAddMessage,Controller.sendMessage);
 };
 

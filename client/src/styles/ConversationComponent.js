@@ -16,11 +16,23 @@ export const ProfileHeader=styled.div`
     align-items:center;
     gap:10px;
 `;
+export const ProfileInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  background: #ededed;
+  align-items: center;
+  gap: 10px;
+`;
 export const ProfileImage = styled.img`
     border-radius:50%;
     width:32px;
     height:32px;
 `;
+export const ContactName = styled.span`
+  font-size: 16px;
+  color: black;
+`;
+
 export const ChatBox=styled.div`
     display:flex;
     background:#f0f0f0;
