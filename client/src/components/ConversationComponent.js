@@ -1,6 +1,6 @@
 import {SearchContainer,SearchInput,ChatBox, Container, ProfileHeader, ProfileImage, Emoji, MessageContainer, MessageDiv, Message, MessageTime, SendButton, SendButtonSign,ContactName,ProfileInfo} from './../styles/ConversationComponent'
 import EmojiPicker from 'emoji-picker-react';
-import { useState,useEffect } from 'react';
+import { useState,useEffect,useRef } from 'react';
 import {httpManager} from './../managers/httpManager';
 import {io} from 'socket.io-client';
 import gettime from '../managers/time';
@@ -9,12 +9,19 @@ const CONNECTION_PORT = "localhost:3001/"
 socket = io(CONNECTION_PORT);
 
 export const  ConversationComponent = (props) => {
+    const bottomRef = useRef(null);
     const { selectedChat, userinfo, refreshContactList } = props;
     const [text, setText] = useState("");
     const [pickerVisible, togglePicker] = useState(false);
     const [messageList, setMessageList] = useState([]);
     const [room,setRoom] = useState(userinfo.name);
     const [OtheruserName,setOtherUserName] = useState();
+  useEffect(()=>{
+    bottomRef.current?.scrollIntoView({block:'end',behavior: 'smooth'});
+    console.log(bottomRef.current);
+    bottomRef.current.scrollIntoView()
+  },[messageList] );
+
 
     useEffect(()=>{
       console.log("room",room);
@@ -46,6 +53,7 @@ export const  ConversationComponent = (props) => {
 
     const SendMessagetoRoom =(msg)=>{
       socket.emit("message",{"room":OtheruserName,"msg":msg});
+      refreshContactList(); 
     }
     const onEnterPress = async (event) => {
 
@@ -108,7 +116,7 @@ export const  ConversationComponent = (props) => {
             <ContactName>{selectedChat.otherUser.name}</ContactName>
           </ProfileInfo>
         </ProfileHeader>
-        <MessageContainer>
+        <MessageContainer >
           {messageList?.map((messageData,index) => (
             <MessageDiv key={index} isYours={messageData.senderEmail === userinfo.email}>
               <Message isYours={messageData.senderEmail === userinfo.email}>
@@ -121,6 +129,7 @@ export const  ConversationComponent = (props) => {
               </Message>
             </MessageDiv>
           ))}
+          <div ref={bottomRef} />
         </MessageContainer>
   
         <ChatBox>
