@@ -20,26 +20,30 @@ export const  ConversationComponent = (props) => {
       console.log("room",room);
       socket.emit('join_room',room);
     },[]);
-    useEffect(()=>{
+    // useEffect(()=>{
       socket.on("msg_rcv",(data)=>{
         let msgReqData = {
           "senderEmail": selectedChat.otherUser.email,
           "message":data,
           "addedOn":gettime()
       };
+      console.log("Data:",data)
+      setMessageList(messageList => [...messageList, msgReqData]);
       console.log(messageList);
-      let messages = (messageList?.length>0)?[...messageList]:[];
-      messages.push(msgReqData);
-        {setMessageList(messages);}
-      })
-    },[socket]);
+      refreshContactList();  
+    })
+      
+    // },[]);
+
     useEffect(()=>{
         socket = io(CONNECTION_PORT)
     },[CONNECTION_PORT]);
+
     useEffect(() => {
       setMessageList(selectedChat.channelData.messages);
       setOtherUserName(selectedChat.otherUser.name);
     }, [selectedChat]);
+
     const SendMessagetoRoom =(msg)=>{
       socket.emit("message",{"room":OtheruserName,"msg":msg});
     }
@@ -81,15 +85,18 @@ export const  ConversationComponent = (props) => {
             "message":text,
             "addedOn":gettime()
         };
-        if(messageList?.length)
-       { const messageResponse = await httpManager.SendMessage({
-          channelId,
-          messages: msgReqData,
-        });}
+        // if(messageList?.length)
+        // { 
+          const messageResponse = await httpManager.SendMessage({
+            channelId,
+            messages: msgReqData,
+          });
+        // }
         // connectToRoom();
         SendMessagetoRoom(text);
         messages.push(msgReqData);
         setMessageList(messages);
+        // setMessageList(messageList => [...messageList, msgReqData]);
         setText("");
       }
     };

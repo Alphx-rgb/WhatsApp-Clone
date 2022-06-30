@@ -11,7 +11,7 @@ const ContactComponent = (props) => {
     const { userData, setChat, userinfo } = props;
     const [searchResult, setSearchResult] = useState();
     const [cookies,setCookie,removecookie] = useCookies(['user-info']);
-  
+    useEffect(()=>{},[userData]);
     const otherUser =
       userData.channelUsers?.find(
         (userObj) => userObj.email !== userinfo.email

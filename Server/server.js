@@ -5,7 +5,6 @@ const server = http.createServer(app)
 const io = require('socket.io')(server,{
     cors:{
         origin:"*",
-
     }
 })
 import connectDB from './dbConnection/index'
@@ -28,7 +27,7 @@ io.on('connection',(socket)=>{
     })
     socket.on('message',(data)=>{
         console.log("data recieved:",data);
-        io.to(data.room).emit("msg_rcv",data.msg);
+        socket.broadcast.to(data.room).emit("msg_rcv",data.msg);
     })
     socket.on('disconnect-me',()=>{
         console.log("USER Disconnected")
